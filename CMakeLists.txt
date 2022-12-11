@@ -44,6 +44,10 @@ target_link_libraries(PBR_Pipeline PRIVATE GLEW::GLEW)
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(PBR_Pipeline PRIVATE glm::glm)
 
+# ImGui
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(PBR_Pipeline PRIVATE imgui::imgui)
+
 # spdlog
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(PBR_Pipeline PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
