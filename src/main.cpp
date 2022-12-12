@@ -1,5 +1,5 @@
 #include <spdlog/spdlog.h>
-#include "logger/logger.hpp"
+#include "logging/logger.hpp"
 
 int main() {
     PBRPipeline::Logger::init();

@@ -72,7 +72,7 @@ namespace PBRPipeline::Logger {
             spdlog::set_default_logger(combinedLogger);
             combinedLogger->set_level(spdlog::level::trace);
 
-            spdlog::set_error_handler(GLCG::Logger::generalErrorHandler);
+            spdlog::set_error_handler(PBRPipeline::Logger::generalErrorHandler);
         } catch (const spdlog::spdlog_ex& ex) {
             spdlog::set_pattern(encodeAnsiColours());
             spdlog::error("Custom logger init failed: {}", ex.what());
