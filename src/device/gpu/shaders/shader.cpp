@@ -68,12 +68,12 @@ namespace PBRPipeline::Device::GPU::Shaders {
             glGetProgramInfoLog(this->programId, 1024, log);
             return ShaderValidationState {
                 .valid =  false,
-                .message = std::string(log)
+                .message = std::optional<std::string>(log)
             };
         }
         return ShaderValidationState {
             .valid = true,
-            .message = {}
+            .message = std::nullopt
         };
     }
 
