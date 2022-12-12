@@ -16,11 +16,16 @@ namespace PBRPipeline::Device::GPU::Shaders {
             if (modules.find(data.type) != modules.end()) {
                 throw std::runtime_error("Duplicate shader module data, already bound for type " + std::to_string(data.type));
             }
+            modules.insert(std::pair(
+                data.type,
+                this->createShader(data)
+            ));
         }
         this->programId = glCreateProgram();
         if (this->programId == 0) {
             throw std::runtime_error("Unable to create new shader program " + name);
         }
+        this->link(modules);
     }
 
     GLuint Shader::createShader(const ShaderData& data) {
@@ -39,6 +44,37 @@ namespace PBRPipeline::Device::GPU::Shaders {
             glGetShaderInfoLog(shaderId, 1024, log);
             throw std::runtime_error("[SHADER PROGRAM] Error while compiling shader: " + std::string(log));
         }
+        glAttachShader(this->programId, shaderId);
+        return shaderId;
+    }
+
+    void Shader::link(std::unordered_map<GLuint, GLuint>& modules) {
+        glLinkProgram(this->programId);
+        if (glGetProgrami(this->programId, GL_LINK_STATUS) == 0) {
+            char log[1024];
+            glGetProgramInfoLog(this->programId, 1024, log);
+            throw std::runtime_error("[SHADER PROGRAM] Error while linking shader" + std::string(log));
+        }
+        for (const auto& [_ignored, shaderId] : modules) {
+            glDetachShader(this->programId, shaderId);
+            glDeleteShader(shaderId);
+        }
+    }
+
+    ShaderValidationState Shader::validate() {
+        glValidateProgram(this->programId);
+        if (glGetProgrami(this->programId, GL_VALIDATE_STATUS) == 0) {
+            char log[1024];
+            glGetProgramInfoLog(this->programId, 1024, log);
+            return ShaderValidationState {
+                .valid =  false,
+                .message = std::string(log)
+            };
+        }
+        return ShaderValidationState {
+            .valid = true,
+            .message = {}
+        };
     }
 
 }
