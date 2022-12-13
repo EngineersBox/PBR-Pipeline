@@ -72,7 +72,7 @@ target_link_libraries(PBR_Pipeline PRIVATE Boost::filesystem Boost::iostreams)
 
 # libpng
 find_package(libpng CONFIG REQUIRED)
-target_link_libraries(PBR_Pipeline PRIVATE png_static)
+target_link_libraries(PBR_Pipeline PRIVATE png)
 
 # Bullet3
 find_package(Bullet CONFIG REQUIRED)

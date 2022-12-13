@@ -6,7 +6,6 @@
 #include <initializer_list>
 #include <string>
 #include <optional>
-#include <gl/GL.h>
 #include <glad/glad.h>
 #include <unordered_map>
 
@@ -24,7 +23,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     class Shader {
     public:
-        Shader(std::string name, std::initializer_list<ShaderData> shaderData);
+        Shader(std::string const& name, std::initializer_list<ShaderData> shaderData);
         ~Shader();
 
         void bind();
@@ -46,8 +45,9 @@ namespace PBRPipeline::Device::GPU::Shaders {
             }
         }
     private:
-        GLuint createShader(const ShaderData& data);
-        void link(std::unordered_map<GLuint, GLuint>& modules);
+        [[nodiscard]]
+        GLuint createShader(const ShaderData& data) const;
+        void link(std::unordered_map<GLuint, GLuint> const& modules);
 
         const std::string name;
         GLuint programId = 0;

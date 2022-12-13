@@ -9,10 +9,10 @@
 
 namespace PBRPipeline::Device::GPU::Shaders {
 
-    Shader::Shader(const std::string name, std::initializer_list<ShaderData> shaderData): name(std::move(name)) {
+    Shader::Shader(std::string const& name, std::initializer_list<ShaderData> shaderData): name(name) {
         std::unordered_map<GLuint, GLuint> modules = std::unordered_map<GLuint, GLuint>();
         for (const ShaderData& data : shaderData) {
-            if (modules.find(data.type) != modules.end()) {
+            if (modules.contains(data.type)) {
                 throw std::runtime_error("Duplicate shader module data, already bound for type " + std::to_string(data.type));
             }
             modules.insert(std::pair(
@@ -27,7 +27,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         this->link(modules);
     }
 
-    GLuint Shader::createShader(const ShaderData& data) {
+    GLuint Shader::createShader(const ShaderData& data) const {
         if (data.file.empty()) {
             throw std::runtime_error("Shader data file path cannot be empty");
         }
@@ -37,26 +37,26 @@ namespace PBRPipeline::Device::GPU::Shaders {
             throw std::runtime_error("[SHADER PROGRAM] Error while creating shader of type " + std::to_string(data.type));
         }
         const char* literalCode = code.c_str();
-        glShaderSource(shaderId, 1, &literalCode, NULL);
+        glShaderSource(shaderId, 1, &literalCode, nullptr);
         glCompileShader(shaderId);
         GLint status;
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
         if (!status) {
             char log[1024];
-            glGetShaderInfoLog(shaderId, 1024, NULL, log);
+            glGetShaderInfoLog(shaderId, 1024, nullptr, log);
             throw std::runtime_error("[SHADER PROGRAM] Error while compiling shader: " + std::string(log));
         }
         glAttachShader(this->programId, shaderId);
         return shaderId;
     }
 
-    void Shader::link(std::unordered_map<GLuint, GLuint>& modules) {
+    void Shader::link(std::unordered_map<GLuint, GLuint> const& modules) {
         glLinkProgram(this->programId);
         GLint status;
         glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
         if (!status) {
             char log[1024];
-            glGetProgramInfoLog(this->programId, 1024, log);
+            glGetProgramInfoLog(this->programId, 1024, nullptr, log);
             throw std::runtime_error("[SHADER PROGRAM] Error while linking shader" + std::string(log));
         }
         for (const auto& [_ignored, shaderId] : modules) {
@@ -71,7 +71,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         glGetProgramiv(this->programId, GL_VALIDATE_STATUS, &status);
         if (!status) {
             char log[1024];
-            glGetProgramInfoLog(this->programId, 1024, log);
+            glGetProgramInfoLog(this->programId, 1024, nullptr, log);
             return ShaderValidationState {
                 .valid =  false,
                 .message = std::optional<std::string>(log)
