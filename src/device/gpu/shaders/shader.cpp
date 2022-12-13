@@ -56,7 +56,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         return shaderId;
     }
 
-    void Shader::link(std::unordered_map<GLuint, GLuint> const& modules) {
+    void Shader::link(std::unordered_map<GLuint, GLuint> const& modules) const {
         glLinkProgram(this->programId);
         GLint status;
         glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
