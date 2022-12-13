@@ -11,7 +11,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         std::unordered_map<GLuint, GLuint> modules = std::unordered_map<GLuint, GLuint>();
         for (const ShaderData& data : shaderData) {
             if (modules.contains(data.type)) {
-                throw std::runtime_error("Duplicate shader module data, already bound for type " + std::to_string(data.type));
+                throw std::runtime_error("[Shader: " + name + "] Duplicate shader module data, already bound for type " + std::to_string(data.type));
             }
             modules.insert(std::pair(
                 data.type,
@@ -20,7 +20,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         }
         this->programId = glCreateProgram();
         if (this->programId == 0) {
-            throw std::runtime_error("Unable to create new shader program " + name);
+            throw std::runtime_error("[Shader: " + name + "] Unable to create new shader program");
         }
         this->link(modules);
     }
@@ -33,6 +33,10 @@ namespace PBRPipeline::Device::GPU::Shaders {
         glDeleteProgram(this->programId);
     }
 
+    std::string Shader::getPrefix() const {
+        return "[Shader: " + this->name + " Id: " + std::to_string(this->programId) + "]";
+    }
+
     GLuint Shader::createShader(const ShaderData& data) const {
         if (data.file.empty()) {
             throw std::runtime_error("Shader data file path cannot be empty");
@@ -40,7 +44,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         std::string code = Utils::FileUtils::readFile(data.file);
         GLuint shaderId = glCreateShader(data.type);
         if (shaderId == 0) {
-            throw std::runtime_error("[SHADER PROGRAM] Error while creating shader of type " + std::to_string(data.type));
+            throw std::runtime_error(this->getPrefix() + " Error while creating shader of type " + std::to_string(data.type));
         }
         const char* literalCode = code.c_str();
         glShaderSource(shaderId, 1, &literalCode, nullptr);
@@ -50,7 +54,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         if (!status) {
             char log[1024];
             glGetShaderInfoLog(shaderId, 1024, nullptr, log);
-            throw std::runtime_error("[SHADER PROGRAM] Error while compiling shader: " + std::string(log));
+            throw std::runtime_error(this->getPrefix() + " Error while compiling shader: " + std::string(log));
         }
         glAttachShader(this->programId, shaderId);
         return shaderId;
@@ -63,7 +67,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         if (!status) {
             char log[1024];
             glGetProgramInfoLog(this->programId, 1024, nullptr, log);
-            throw std::runtime_error("[SHADER PROGRAM] Error while linking shader" + std::string(log));
+            throw std::runtime_error(this->getPrefix() + " Error while linking shader:" + std::string(log));
         }
         for (const auto& [_ignored, shaderId] : modules) {
             glDetachShader(this->programId, shaderId);
@@ -91,7 +95,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     void Shader::bind() {
         if (this->bound) {
-            throw std::runtime_error("Shader " + this->name + " is already bound");
+            throw std::runtime_error(this->getPrefix() + " Shader is already bound");
         }
         glUseProgram(this->programId);
         this->bound = true;
@@ -99,7 +103,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     void Shader::unbind() {
         if (!this->bound) {
-            throw std::runtime_error("Shader " + this->name + " is not bound");
+            throw std::runtime_error(this->getPrefix() + " Shader is not bound");
         }
         glUseProgram(0);
         this->bound = false;

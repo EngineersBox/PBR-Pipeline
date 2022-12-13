@@ -48,6 +48,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         [[nodiscard]]
         GLuint createShader(const ShaderData& data) const;
         void link(std::unordered_map<GLuint, GLuint> const& modules) const;
+        inline std::string getPrefix() const;
 
         const std::string name;
         GLuint programId = 0;
