@@ -12,8 +12,8 @@
 namespace PBRPipeline::Device::GPU::Shaders {
 
     struct ShaderData {
-        std::string file;
         GLuint type;
+        std::string file;
     };
 
     struct ShaderValidationState {
