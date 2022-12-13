@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 #include <algorithm>
-#include <unordered_map>
 #include <iostream>
 #include <fstream>
 
@@ -37,11 +36,14 @@ namespace PBRPipeline::Device::GPU::Shaders {
         if (shaderId == 0) {
             throw std::runtime_error("[SHADER PROGRAM] Error while creating shader of type " + std::to_string(data.type));
         }
-        glShaderSource(shaderId, code);
+        const char* literalCode = code.c_str();
+        glShaderSource(shaderId, 1, &literalCode, NULL);
         glCompileShader(shaderId);
-        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
+        GLint status;
+        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
+        if (!status) {
             char log[1024];
-            glGetShaderInfoLog(shaderId, 1024, log);
+            glGetShaderInfoLog(shaderId, 1024, NULL, log);
             throw std::runtime_error("[SHADER PROGRAM] Error while compiling shader: " + std::string(log));
         }
         glAttachShader(this->programId, shaderId);
@@ -50,7 +52,9 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     void Shader::link(std::unordered_map<GLuint, GLuint>& modules) {
         glLinkProgram(this->programId);
-        if (glGetProgrami(this->programId, GL_LINK_STATUS) == 0) {
+        GLint status;
+        glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
+        if (!status) {
             char log[1024];
             glGetProgramInfoLog(this->programId, 1024, log);
             throw std::runtime_error("[SHADER PROGRAM] Error while linking shader" + std::string(log));
@@ -63,7 +67,9 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     ShaderValidationState Shader::validate() {
         glValidateProgram(this->programId);
-        if (glGetProgrami(this->programId, GL_VALIDATE_STATUS) == 0) {
+        GLint status;
+        glGetProgramiv(this->programId, GL_VALIDATE_STATUS, &status);
+        if (!status) {
             char log[1024];
             glGetProgramInfoLog(this->programId, 1024, log);
             return ShaderValidationState {

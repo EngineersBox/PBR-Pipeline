@@ -36,9 +36,9 @@ target_link_libraries(PBR_Pipeline PUBLIC ${OPENGL_LIBRARIES})
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(PBR_Pipeline PRIVATE glfw)
 
-# GLEW
-find_package(GLEW REQUIRED)
-target_link_libraries(PBR_Pipeline PRIVATE GLEW::GLEW)
+# GLAD
+find_package(glad REQUIRED)
+target_link_libraries(PBR_Pipeline PRIVATE glad::glad)
 
 # GLM
 find_package(glm CONFIG REQUIRED)

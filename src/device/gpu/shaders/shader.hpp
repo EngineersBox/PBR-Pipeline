@@ -7,7 +7,8 @@
 #include <string>
 #include <optional>
 #include <gl/GL.h>
-#include <gl/glew.h>
+#include <glad/glad.h>
+#include <unordered_map>
 
 namespace PBRPipeline::Device::GPU::Shaders {
 
