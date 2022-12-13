@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
 
 #include "../../../utils/file_utils.hpp"
 
@@ -25,6 +23,14 @@ namespace PBRPipeline::Device::GPU::Shaders {
             throw std::runtime_error("Unable to create new shader program " + name);
         }
         this->link(modules);
+    }
+
+    Shader::~Shader() {
+        if (this->bound) {
+            glUseProgram(0);
+            this->bound = false;
+        }
+        glDeleteProgram(this->programId);
     }
 
     GLuint Shader::createShader(const ShaderData& data) const {
@@ -81,6 +87,22 @@ namespace PBRPipeline::Device::GPU::Shaders {
             .valid = true,
             .message = std::nullopt
         };
+    }
+
+    void Shader::bind() {
+        if (this->bound) {
+            throw std::runtime_error("Shader " + this->name + " is already bound");
+        }
+        glUseProgram(this->programId);
+        this->bound = true;
+    }
+
+    void Shader::unbind() {
+        if (!this->bound) {
+            throw std::runtime_error("Shader " + this->name + " is not bound");
+        }
+        glUseProgram(0);
+        this->bound = false;
     }
 
 }

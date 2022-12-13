@@ -17,8 +17,8 @@ namespace PBRPipeline::Device::GPU::Shaders {
     };
 
     struct ShaderValidationState {
-        bool valid;
-        std::optional<std::string> message;
+        bool valid = false;
+        std::optional<std::string> message = std::nullopt;
     };
 
     class Shader {
