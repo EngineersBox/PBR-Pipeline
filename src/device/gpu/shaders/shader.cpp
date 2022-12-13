@@ -7,7 +7,7 @@
 
 namespace PBRPipeline::Device::GPU::Shaders {
 
-    Shader::Shader(std::string const& name, std::initializer_list<ShaderData> shaderData): name(name) {
+    Shader::Shader(const std::string& name, std::initializer_list<ShaderData> shaderData): name(name) {
         std::unordered_map<GLuint, GLuint> modules = std::unordered_map<GLuint, GLuint>();
         for (const ShaderData& data : shaderData) {
             if (modules.contains(data.type)) {
@@ -60,7 +60,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         return shaderId;
     }
 
-    void Shader::link(std::unordered_map<GLuint, GLuint> const& modules) const {
+    void Shader::link(const std::unordered_map<GLuint, GLuint>& modules) const {
         glLinkProgram(this->programId);
         GLint status;
         glGetProgramiv(this->programId, GL_LINK_STATUS, &status);

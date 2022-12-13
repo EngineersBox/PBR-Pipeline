@@ -23,7 +23,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
 
     class Shader {
     public:
-        Shader(std::string const& name, std::initializer_list<ShaderData> shaderData);
+        Shader(const std::string& name, std::initializer_list<ShaderData> shaderData);
         ~Shader();
 
         void bind();
@@ -47,7 +47,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
     private:
         [[nodiscard]]
         GLuint createShader(const ShaderData& data) const;
-        void link(std::unordered_map<GLuint, GLuint> const& modules) const;
+        void link(const std::unordered_map<GLuint, GLuint>& modules) const;
         [[nodiscard]]
         inline std::string getPrefix() const;
 

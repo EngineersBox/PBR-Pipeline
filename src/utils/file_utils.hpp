@@ -10,7 +10,7 @@
 
 namespace PBRPipeline::Utils::FileUtils {
 
-    static std::string readFile(std::string filePath) {
+    static std::string readFile(const std::string& filePath) {
         std::ifstream file(filePath);
         std::string fileContents;
         if (!file.is_open()) {
