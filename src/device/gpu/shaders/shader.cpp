@@ -52,7 +52,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         GLint status;
         glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
         if (!status) {
-            char log[1024];
+            GLchar log[1024];
             glGetShaderInfoLog(shaderId, 1024, nullptr, log);
             throw std::runtime_error(this->getPrefix() + " Error while compiling shader: " + std::string(log));
         }
@@ -65,7 +65,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         GLint status;
         glGetProgramiv(this->programId, GL_LINK_STATUS, &status);
         if (!status) {
-            char log[1024];
+            GLchar log[1024];
             glGetProgramInfoLog(this->programId, 1024, nullptr, log);
             throw std::runtime_error(this->getPrefix() + " Error while linking shader:" + std::string(log));
         }
@@ -80,7 +80,7 @@ namespace PBRPipeline::Device::GPU::Shaders {
         GLint status;
         glGetProgramiv(this->programId, GL_VALIDATE_STATUS, &status);
         if (!status) {
-            char log[1024];
+            GLchar log[1024];
             glGetProgramInfoLog(this->programId, 1024, nullptr, log);
             return ShaderValidationState {
                 .valid =  false,
